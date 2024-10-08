@@ -45,13 +45,40 @@ end
 -- try require("Folder.Filename") to include code from another file in this, so you can store code in libraries
 -- the "LifeBoatAPI" is included by default in /_build/libs/ - you can use require("LifeBoatAPI") to get this, and use all the LifeBoatAPI.<functions>!
 
+require("Functions.pid")
+
+local pid = PID:new(1.0, 0.1, 0.05)
+local measurement = 0
+
 ticks = 0
 function onTick()
     ticks = ticks + 1
+
+    pid:setSetpoint(100)  -- Definindo o setpoint desejado
+
+    local dt = 1  -- Intervalo de tempo em segundos
+    -- local measurement = 0  -- Medida inicial
+
+    Setpoint = input.getNumber(10)
+    Current = input.getNumber(11)
+    
+    
+
+    local pidout = pid:compute(measurement, dt)
+    measurement = measurement + pidout * 0.1  -- Simulando a resposta do sistema
+    print(string.format("Iteração: %d, Medida: %.2f, Saída PID: %.2f", ticks, measurement, pidout))
+    output.setNumber(10, pidout)
+        
+    -- for i = 1, 100 do
+    --     local output = pid:compute(measurement, dt)
+    --     measurement = measurement + output * 0.1  -- Simulando a resposta do sistema
+    --     print(string.format("Iteração: %d, Medida: %.2f, Saída PID: %.2f", i, measurement, output))
+    -- end
+
 end
 
 function onDraw()
-    screen.drawCircle(16,16,5)
+    
 end
 
 
